@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trọ Xinh Sài Gòn - Minh Hoàng (Sale Trọ Có Tâm)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans pb-16">
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div ondblclick="window.openPinBox()" title="Nhấn đúp 2 lần để mở Quản lý Sale" class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-extrabold cursor-pointer select-none">🏠</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 id="brandName" class="text-xl font-extrabold text-slate-900">Trọ Xinh Sài Gòn</h1>
+            <span id="cloudBadge" class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">⚡ Trực tuyến thời gian thực</span>
+          </div>
+          <p id="tagline" class="text-xs text-slate-500">Hệ thống Phòng Trọ • Studio • Căn Hộ Dịch Vụ Chính Chủ & Uy Tín</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="exitAdminBtn" onclick="window.exitAdmin()" class="hidden px-3 py-2 rounded-xl bg-rose-100 text-rose-700 font-bold text-xs">Thoát Sale</button>
+        <a id="phoneBtn" href="tel:0909123456" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm">📞 0909123456</a>
+        <a id="zaloBtn" href="https://zalo.me/0909123456" target="_blank" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm">💬 Zalo Tư Vấn</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 mt-6 space-y-6">
+    <!-- Bộ lọc tìm kiếm nhanh cho khách -->
+    <div class="bg-white p-4 sm:p-5 rounded-3xl shadow-sm border border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <input id="q" oninput="window.renderRooms()" placeholder="🔍 Tìm tên đường, quận, mã phòng..." class="px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:bg-white focus:outline-none" />
+      <select id="dist" onchange="window.renderRooms()" class="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold">
+        <option value="">📍 Tất cả Quận / Khu vực</option>
+      </select>
+      <select id="type" onchange="window.renderRooms()" class="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold">
+        <option value="">🏠 Tất cả loại phòng</option>
+        <option value="Phòng trọ">Phòng trọ</option>
+        <option value="Studio">Studio</option>
+        <option value="Duplex / Gác lửng">Duplex / Gác lửng</option>
+        <option value="CHDV 1PN">CHDV 1PN</option>
+        <option value="CHDV 2PN">CHDV 2PN</option>
+        <option value="Chung cư">Chung cư</option>
+      </select>
+      <select id="price" onchange="window.renderRooms()" class="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold">
+        <option value="all">💰 Mọi mức giá</option>
+        <option value="u35">Dưới 3.5 triệu</option>
+        <option value="35to50">Từ 3.5 - 5 triệu</option>
+        <option value="50to70">Từ 5 - 7 triệu</option>
+        <option value="o70">Trên 7 triệu</option>
+      </select>
+    </div>
+
+    <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 mt-16 pt-6 border-t border-slate-200 flex items-center justify-between text-xs text-slate-400">
+    <span>© Trọ Xinh Sài Gòn - Cam kết hình thật & giá chính chủ</span>
+    <button onclick="window.openPinBox()" class="opacity-40 hover:opacity-100 transition">🔒</button>
+  </footer>
+
+  <!-- Hộp thoại mở khóa PIN ẩn dành cho chủ web trên mọi thiết bị -->
+  <div id="pinModal" class="hidden fixed inset-0 z-50 bg-slate-950/75 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4">
+      <h3 class="font-extrabold text-slate-900 text-base">🔑 Mở Khóa Quyền Chủ Web</h3>
+      <input id="pinInput" type="password" placeholder="Nhập mã PIN..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-center font-bold" />
+      <p id="pinErr" class="text-xs text-rose-600 hidden">Mã PIN chưa đúng!</p>
+      <div class="flex gap-2">
+        <button onclick="document.getElementById('pinModal').classList.add('hidden')" class="flex-1 py-2 rounded-xl bg-slate-100 font-bold text-xs">Đóng</button>
+        <button onclick="window.checkPin()" class="flex-1 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs">Mở Khóa</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let ROOMS = [{"description":"Phòng Studio thiết kế hiện đại, ban công đón nắng tự nhiên cực mát. Trang bị sẵn máy lạnh Inverter, tủ lạnh 2 cánh, giường nệm cao su, tủ quần áo lớn, bàn làm việc và kệ bếp nấu ăn riêng. Khu vực an ninh, cách Hàng Xanh chỉ 3 phút di chuyển.","electricPrice":3800,"waterPrice":100000,"updatedAt":1763400000000,"id":"room-bt-101","serviceUnit":"phòng","area":30,"type":"Studio","title":"Studio Ban Công Cây Xanh Cực Thoáng - Gần ĐH Hutech & Ngoại Thương","deposit":"Cọc 1 tháng","district":"Bình Thạnh","waterUnit":"người","images":["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80","https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80","https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80"],"address":"Đường D2 (Nguyễn Gia Trí), Phường 25, Quận Bình Thạnh","servicePrice":150000,"parkingPrice":0,"price":4800000,"amenities":["Ban công thoáng","Full nội thất","Giờ giấc tự do","Thang máy","Không chung chủ","Khóa vân tay","Hầm để xe rộng"],"code":"BT-101","status":"available"},{"code":"PN-205","title":"Duplex Gác Cao Hiện Đại Khu Phan Xích Long - Cho Nuôi Pet","waterPrice":100000,"address":"Hoa Sứ, Khu Phan Xích Long, Quận Phú Nhuận","district":"Phú Nhuận","id":"room-pn-205","status":"available","amenities":["Cửa sổ lớn","Gác cao không đụng đầu","Nuôi thú cưng","Giờ giấc tự do","Không chung chủ","Khóa vân tay"],"electricPrice":3500,"deposit":"Cọc 1 tháng","waterUnit":"người","price":4200000,"images":["https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=1000&q=80","https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1000&q=80"],"serviceUnit":"phòng","servicePrice":150000,"updatedAt":1763390000000,"parkingPrice":100000,"type":"Duplex / Gác lửng","area":28,"description":"Phòng Duplex trần cao 4.2m, gác đúc thật đứng thẳng thoải mái. Khu vực sầm uất bậc nhất Phú Nhuận, bước chân xuống nhà là đầy đủ siêu thị, quán cafe, phòng gym. Chủ nhà cực kỳ thân thiện, hỗ trợ cho nuôi mèo hoặc cún nhỏ sạch sẽ."},{"id":"room-q3-401","code":"Q3-401","title":"Studio Cao Cấp Trung Tâm Quận 3 - Full Nội Thất Gỗ Ấm Cúng","type":"Studio","district":"Quận 3","address":"Lê Văn Sỹ, Phường 14, Quận 3","price":5500000,"area":32,"status":"soon","electricPrice":3800,"waterPrice":100000,"waterUnit":"người","servicePrice":150000,"serviceUnit":"phòng","parkingPrice":120000,"deposit":"Cọc 1 tháng","amenities":["Ban công thoáng","Full nội thất","Máy giặt riêng","Thang máy","Giờ giấc tự do","Khóa vân tay"],"description":"Tọa lạc ngay trục đường Lê Văn Sỹ thuận tiện qua Quận 1, Quận 10, Phú Nhuận. Phòng thiết kế tone gỗ Muji tối giản, đầy đủ tiện nghi từ A-Z chỉ việc xách vali vào ở. Phòng sắp trống cuối tuần này, nhận cọc giữ chỗ sớm.","images":["https://images.unsplash.com/photo-1536376072261-38c75010e6c9?auto=format&fit=crop&w=1000&q=80","https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=1000&q=80"],"updatedAt":1763360000000},{"waterUnit":"người","title":"Căn Hộ Dịch Vụ 1 Phòng Ngủ Riêng Biệt - Sát Lotte Mart Quận 7","code":"Q7-302","id":"room-q7-302","district":"Quận 7","updatedAt":1763380000000,"parkingPrice":0,"servicePrice":200000,"status":"available","electricPrice":4000,"price":6500000,"waterPrice":100000,"deposit":"Cọc 1.5 tháng","type":"CHDV 1PN","description":"Căn hộ 1 phòng ngủ + 1 phòng khách có vách ngăn riêng tư, cực hợp cho cặp đôi, nhân viên văn phòng hoặc nhóm 2-3 bạn ở. Có sẵn máy giặt riêng từng phòng, ban công phơi đồ riêng, sofa êm ái và bếp rộng rãi.","images":["https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1000&q=80","https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1000&q=80","https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=1000&q=80"],"area":42,"amenities":["Ban công thoáng","Full nội thất","Máy giặt riêng","Bếp tách biệt","Thang máy","Giờ giấc tự do","Không chung chủ"],"address":"Nguyễn Thị Thập, Phường Tân Quy, Quận 7","serviceUnit":"phòng"},{"amenities":["Cửa sổ lớn","Giờ giấc tự do","Không chung chủ","Khóa vân tay","Hầm để xe rộng"],"deposit":"Cọc 1 tháng","status":"available","price":3200000,"address":"Cộng Hòa, Phường 12, Quận Tân Bình","serviceUnit":"phòng","code":"TB-108","description":"Phòng mới tinh sạch đẹp, có sẵn máy lạnh, kệ bếp và nhà vệ sinh riêng trong phòng. Hẻm xe hơi yên tĩnh, camera an ninh 24/7, miễn phí để xe máy dưới tầng trệt. Tiết kiệm tối đa chi phí cho sinh viên và người mới đi làm.","type":"Phòng trọ","area":22,"images":["https://images.unsplash.com/photo-1540518614846-7ede433c457?auto=format&fit=crop&w=1000&q=80","https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80"],"updatedAt":1763370000000,"id":"room-tb-108","title":"Phòng Trọ Mới Xây Giá Sinh Viên Có Cửa Sổ Thoáng - Gần Sân Bay","electricPrice":3500,"servicePrice":100000,"district":"Tân Bình","waterPrice":80000,"parkingPrice":0,"waterUnit":"người"},{"id":"room-td-509","code":"TD-509","title":"Chung Cư Mini 2PN Giá Tốt Cho Nhóm Bạn / Gia Đình Nhỏ - Thảo Điền","type":"Chung cư","district":"TP. Thủ Đức","address":"Quốc Hương, Phường Thảo Điền, TP. Thủ Đức","price":7800000,"area":50,"status":"rented","electricPrice":3500,"waterPrice":22000,"waterUnit":"khối","servicePrice":200000,"serviceUnit":"phòng","parkingPrice":0,"deposit":"Cọc 2 tháng","amenities":["Ban công thoáng","Full nội thất","Nuôi thú cưng","Máy giặt riêng","Bếp tách biệt","Thang máy","Giờ giấc tự do"],"description":"Căn hộ 2 phòng ngủ thoáng mát ngay khu Thảo Điền, gần ga Metro. Không gian sống xanh mát, yên bình, có bảo vệ trực 24/24 và miễn phí 2 xe máy.","images":["https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1000&q=80","https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1000&q=80"],"updatedAt":1763350000000}];
+    let SETTINGS = {"brandName":"Trọ Xinh Sài Gòn","tagline":"Hệ thống Phòng Trọ • Studio • Căn Hộ Dịch Vụ Chính Chủ & Uy Tín","bannerTitle":"Tìm Phòng Ưng Ý - Minh Bạch Chi Phí - Xem Phòng Miễn Phí 100%","bannerSubtitle":"Cam kết hình thật 100%, báo đúng giá chủ nhà, hỗ trợ thương lượng hợp đồng & dọn vào ở ngay.","saleName":"Minh Hoàng (Sale Trọ Có Tâm)","salePhone":"0909123456","saleZalo":"0909123456","saleAreas":"Bình Thạnh, Phú Nhuận, Quận 1, Quận 3, Tân Bình, Quận 7, Thủ Đức","customDistricts":"Bình Thạnh, Phú Nhuận, Quận 1, Quận 3, Quận 7, Tân Bình, Gò Vấp, TP. Thủ Đức, Quận 10, Quận 4","saleAvatar":"https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80","adminPin":"123456","clearedSamples":false};
+    let IS_ADMIN = false;
+    const SYNC_API = "https://ntfy.sh/saletro_v1_c_9a1989bbaeb9d821_Appjsx-531";
+
+    const fmt = (n) => new Intl.NumberFormat('vi-VN').format(Number(n) || 0) + 'đ';
+
+    async function pushCloudSync() {
+      try {
+        await fetch(SYNC_API, {
+          method: 'POST',
+          body: JSON.stringify({
+            type: 'FULL_SYNC',
+            updatedAt: Date.now(),
+            rooms: ROOMS,
+            settings: SETTINGS
+          })
+        });
+      } catch (e) {
+        console.warn('Sync error:', e);
+      }
+    }
+
+    window.openPinBox = function() {
+      document.getElementById('pinInput').value = '';
+      document.getElementById('pinErr').classList.add('hidden');
+      document.getElementById('pinModal').classList.remove('hidden');
+    };
+
+    window.checkPin = function() {
+      const val = document.getElementById('pinInput').value.trim();
+      if (val === (SETTINGS.adminPin || '123456')) {
+        IS_ADMIN = true;
+        document.getElementById('pinModal').classList.add('hidden');
+        document.getElementById('exitAdminBtn').classList.remove('hidden');
+        window.renderRooms();
+      } else {
+        document.getElementById('pinErr').classList.remove('hidden');
+      }
+    };
+
+    window.exitAdmin = function() {
+      IS_ADMIN = false;
+      document.getElementById('exitAdminBtn').classList.add('hidden');
+      window.renderRooms();
+    };
+
+    window.toggleStatus = async function(id) {
+      const room = ROOMS.find(r => r.id === id);
+      if (!room) return;
+      const order = ['available', 'soon', 'rented'];
+      room.status = order[(order.indexOf(room.status) + 1) % order.length];
+      room.updatedAt = Date.now();
+      window.renderRooms();
+      await pushCloudSync();
+    };
+
+    window.removeRoom = async function(id) {
+      ROOMS = ROOMS.filter(r => r.id !== id);
+      window.renderRooms();
+      await pushCloudSync();
+    };
+
+    function updateDistrictOptions() {
+      const distSelect = document.getElementById('dist');
+      const currentVal = distSelect.value;
+      const dists = [...new Set(ROOMS.map(r => r.district).filter(Boolean))];
+      distSelect.innerHTML = '<option value="">📍 Tất cả Quận / Khu vực</option>' +
+        dists.map(d => `<option value="${d}">${d}</option>`).join('');
+      distSelect.value = currentVal;
+    }
+
+    function updateHeaderUI() {
+      document.getElementById('brandName').textContent = SETTINGS.brandName || 'Trọ Xinh';
+      document.getElementById('tagline').textContent = SETTINGS.tagline || '';
+      const phoneBtn = document.getElementById('phoneBtn');
+      phoneBtn.href = 'tel:' + (SETTINGS.salePhone || '');
+      phoneBtn.textContent = '📞 ' + (SETTINGS.salePhone || '');
+      const zaloClean = (SETTINGS.saleZalo || SETTINGS.salePhone || '').replace(/\D/g, '');
+      document.getElementById('zaloBtn').href = 'https://zalo.me/' + zaloClean;
+    }
+
+    window.renderRooms = function() {
+      const q = (document.getElementById('q').value || '').toLowerCase().trim();
+      const d = document.getElementById('dist').value;
+      const t = document.getElementById('type').value;
+      const p = document.getElementById('price').value;
+
+      const list = ROOMS.filter(r => {
+        if (d && r.district !== d) return false;
+        if (t && r.type !== t) return false;
+        const price = Number(r.price) || 0;
+        if (p === 'u35' && price >= 3500000) return false;
+        if (p === '35to50' && (price < 3500000 || price > 5000000)) return false;
+        if (p === '50to70' && (price <= 5000000 || price > 7000000)) return false;
+        if (p === 'o70' && price <= 7000000) return false;
+        if (q && !(r.title + ' ' + r.address + ' ' + r.code + ' ' + r.district).toLowerCase().includes(q)) return false;
+        return true;
+      }).sort((a, b) => (Number(b.updatedAt) || 0) - (Number(a.updatedAt) || 0));
+
+      const zaloClean = (SETTINGS.saleZalo || SETTINGS.salePhone || '').replace(/\D/g, '');
+
+      document.getElementById('grid').innerHTML = list.map(r => `
+        <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col">
+          <div class="relative h-56 bg-slate-200">
+            <img src="${(r.images && r.images[0]) || ''}" class="w-full h-full object-cover" />
+            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-xl ${r.status === 'available' ? 'bg-emerald-600 text-white' : r.status === 'soon' ? 'bg-amber-500 text-slate-950' : 'bg-slate-600 text-white'} text-xs font-extrabold">#${r.code} • ${r.status === 'available' ? 'Còn trống' : r.status === 'soon' ? 'Sắp trống' : 'Đã cho thuê'}</span>
+            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-xl bg-white/90 text-slate-900 text-xs font-bold">${r.type || 'Phòng'}</span>
+            <span class="absolute bottom-3 left-3 px-3 py-1 rounded-xl bg-slate-900/85 text-white font-extrabold text-sm">${fmt(r.price)}/tháng • ${r.area}m²</span>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="text-xs font-bold text-emerald-700">📍 ${r.district} • ${r.address}</div>
+              <h3 class="font-extrabold text-slate-900 mt-1 text-base">${r.title}</h3>
+              <div class="grid grid-cols-2 gap-2 mt-3 p-3 bg-slate-50 rounded-2xl text-xs border border-slate-100">
+                <div>⚡ Điện: <b>${r.electricPrice ? fmt(r.electricPrice) + '/kWh' : 'Miễn phí'}</b></div>
+                <div>💧 Nước: <b>${r.waterPrice ? fmt(r.waterPrice) + '/' + r.waterUnit : 'Miễn phí'}</b></div>
+                <div>🧹 Dịch vụ: <b>${r.servicePrice ? fmt(r.servicePrice) + '/' + r.serviceUnit : 'Miễn phí'}</b></div>
+                <div>🛵 Gửi xe: <b>${r.parkingPrice ? fmt(r.parkingPrice) + '/xe' : 'Miễn phí'}</b></div>
+              </div>
+              <p class="text-xs text-slate-600 mt-2 line-clamp-2">${r.description || ''}</p>
+            </div>
+            <div class="space-y-2">
+              <a href="https://zalo.me/${zaloClean}" target="_blank" class="block text-center py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition">💬 Nhắn Zalo Xem Phòng #${r.code}</a>
+              ${IS_ADMIN ? `
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-dashed border-slate-200">
+                  <button onclick="window.toggleStatus('${r.id}')" class="py-1.5 rounded-lg bg-amber-100 text-amber-800 font-bold text-xs">Đổi Trạng Thái</button>
+                  <button onclick="window.removeRoom('${r.id}')" class="py-1.5 rounded-lg bg-rose-100 text-rose-700 font-bold text-xs">Xóa Phòng</button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    };
+
+    updateDistrictOptions();
+    updateHeaderUI();
+    window.renderRooms();
+
+    // 1. Tải bản cập nhật mới nhất ngay khi mở trang trên điện thoại
+    async function loadLatestFromCloud() {
+      try {
+        const res = await fetch(SYNC_API + '/json?poll=1&since=48h');
+        const text = await res.text();
+        const lines = text.trim().split('\n').filter(Boolean);
+        for (let i = lines.length - 1; i >= 0; i--) {
+          try {
+            const evt = JSON.parse(lines[i]);
+            if (evt.event === 'message' && evt.message) {
+              const data = JSON.parse(evt.message);
+              if (data && data.type === 'FULL_SYNC') {
+                if (Array.isArray(data.rooms)) ROOMS = data.rooms;
+                if (data.settings) SETTINGS = { ...SETTINGS, ...data.settings };
+                updateDistrictOptions();
+                updateHeaderUI();
+                window.renderRooms();
+                break;
+              }
+            }
+          } catch (e) {}
+        }
+      } catch (e) {}
+    }
+    loadLatestFromCloud();
+
+    // 2. Mở kết nối trực tiếp (SSE) để tự nhảy dữ liệu ngay giây phút chủ web bấm Lưu
+    try {
+      const es = new EventSource(SYNC_API + '/sse');
+      es.onmessage = (e) => {
+        try {
+          const evt = JSON.parse(e.data);
+          if (evt.event === 'message' && evt.message) {
+            const data = JSON.parse(evt.message);
+            if (data && data.type === 'FULL_SYNC') {
+              if (Array.isArray(data.rooms)) ROOMS = data.rooms;
+              if (data.settings) SETTINGS = { ...SETTINGS, ...data.settings };
+              updateDistrictOptions();
+              updateHeaderUI();
+              window.renderRooms();
+            }
+          }
+        } catch (err) {}
+      };
+    } catch (e) {}
+  </script>
+</body>
+</html>
